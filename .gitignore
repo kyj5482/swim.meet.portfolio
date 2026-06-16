@@ -1,0 +1,38 @@
+# Node
+node_modules/
+dist/
+*.log
+npm-debug.log*
+.npm
+
+# TypeScript
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Build / coverage
+coverage/
+.vite/
+build/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Uploaded result sheets (local dev object store)
+.storage/
+uploads/

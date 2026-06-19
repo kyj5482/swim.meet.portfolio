@@ -17,6 +17,11 @@
 서비스 직접 호출 없이 `api-gateway`(REST)만 통한다. API 계약은 `docs/03-api-contracts.md`.
 모든 데이터는 `src/api/*`만 의존 — 기본은 mock(자립), `VITE_USE_MOCK=false`면 실서버.
 
+## 디자인
+UI/UX를 바꾸기 전·후 **`docs/10-design-guide.md`를 보고 갱신**한다. 색/간격/반경은
+`styles.css`의 `:root` **토큰(var)으로만** 사용(하드코딩 금지). 단일 강조색(아쿠아 블루),
+등급은 단색 강도 램프, 그래프는 방향 라벨·격자·면적으로 직관화(Meet Mobile식 명료함).
+
 ## 스택
 
 - React 18 + Vite + TypeScript (모바일 PWA, iOS Capacitor 지향)

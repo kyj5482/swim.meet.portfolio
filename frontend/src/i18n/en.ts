@@ -103,6 +103,7 @@ export const en: Record<TranslationKey, string> = {
   'pf.rate.slow': '→ Gradual',
   'pf.rate.flat': '⏸ Plateau',
   'pf.improved': 'gain',
+  'pf.faster': 'faster ↑',
   'pf.rate.detail': '{total}% over {months} months · {perMonth}%/mo',
   'pf.ageNote': 'Meets are split by age group. We preserve your best time and tier in each age group so you can see the whole growth trajectory.',
   'pf.familyHint': 'Invite family to build records together and compete.',

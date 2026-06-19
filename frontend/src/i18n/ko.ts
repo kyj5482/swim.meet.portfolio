@@ -101,6 +101,7 @@ export const ko = {
   'pf.rate.slow': '→ 완만한 향상',
   'pf.rate.flat': '⏸ 정체',
   'pf.improved': '향상',
+  'pf.faster': '빠를수록 위 ↑',
   'pf.rate.detail': '{months}개월간 총 {total}% 향상 · 월 평균 {perMonth}%',
   'pf.ageNote': '대회는 나이대로 나뉩니다. 각 나이 그룹에서의 기록·등급을 잃지 않고 보존해 성장 궤적을 한눈에 볼 수 있어요.',
   'pf.familyHint': '가족을 초대하면 함께 기록을 쌓고 순위를 겨뤄요.',

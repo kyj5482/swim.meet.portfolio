@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ageGroupBreakdown, improvementRate, rateLabel } from './ageAnalysis';
+import { ageGroupBreakdown, improvementRate, rateCategory } from './ageAnalysis';
 import type { RaceResult } from '../types';
 
 const dates: Record<string, string> = {
@@ -56,11 +56,11 @@ describe('improvementRate', () => {
   });
 });
 
-describe('rateLabel', () => {
-  it('속도 구간별 라벨', () => {
-    expect(rateLabel(1.5)).toContain('매우 빠름');
-    expect(rateLabel(0.5)).toContain('꾸준');
-    expect(rateLabel(0.1)).toContain('완만');
-    expect(rateLabel(0)).toContain('정체');
+describe('rateCategory', () => {
+  it('속도 구간별 분류', () => {
+    expect(rateCategory(1.5)).toBe('fast');
+    expect(rateCategory(0.5)).toBe('steady');
+    expect(rateCategory(0.1)).toBe('slow');
+    expect(rateCategory(0)).toBe('flat');
   });
 });

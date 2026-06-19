@@ -9,21 +9,9 @@
  */
 import type { PortfolioBundle } from '../types';
 import { SEED } from '../data/seed';
+import { USE_MOCK, apiFetch } from './config';
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8080';
-const USE_MOCK = (import.meta.env.VITE_USE_MOCK ?? 'true') !== 'false';
-
-function newRequestId(): string {
-  return (globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`).toString();
-}
-
-/** 게이트웨이를 통한 fetch — x-request-id 자동 부여. */
-export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
-  const headers = new Headers(init.headers);
-  if (!headers.has('x-request-id')) headers.set('x-request-id', newRequestId());
-  headers.set('content-type', 'application/json');
-  return fetch(`${API_BASE}${path}`, { ...init, headers });
-}
+export { apiFetch } from './config';
 
 /** 선수 1명의 포트폴리오 묶음을 가져온다. */
 export async function getPortfolio(athleteId: string): Promise<PortfolioBundle> {

@@ -71,10 +71,12 @@ export function improvementRate(points: { date: string; timeMs: number }[]): Imp
   return { months, totalPct, pctPerMonth };
 }
 
-/** 향상 속도 정성 라벨(휴리스틱 임계값). */
-export function rateLabel(pctPerMonth: number): string {
-  if (pctPerMonth >= 1.0) return '🚀 매우 빠름';
-  if (pctPerMonth >= 0.4) return '↗ 꾸준히 향상';
-  if (pctPerMonth > 0) return '→ 완만한 향상';
-  return '⏸ 정체';
+export type RateCategory = 'fast' | 'steady' | 'slow' | 'flat';
+
+/** 향상 속도 정성 분류(휴리스틱 임계값). 표시는 i18n에서 처리. */
+export function rateCategory(pctPerMonth: number): RateCategory {
+  if (pctPerMonth >= 1.0) return 'fast';
+  if (pctPerMonth >= 0.4) return 'steady';
+  if (pctPerMonth > 0) return 'slow';
+  return 'flat';
 }

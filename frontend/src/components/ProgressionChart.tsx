@@ -1,5 +1,6 @@
 import { formatMsToTime } from '../lib/time';
 import { progressionFor, improvementPct } from '../lib/portfolio';
+import { useI18n } from '../i18n';
 import type { PortfolioBundle } from '../types';
 
 /**
@@ -7,9 +8,10 @@ import type { PortfolioBundle } from '../types';
  * 벤치마킹. 외부 차트 라이브러리 없이 가벼운 SVG로(번들 절약). 아래로 갈수록 빠름.
  */
 export function ProgressionChart({ bundle, eventKey: key }: { bundle: PortfolioBundle; eventKey: string }) {
+  const { t } = useI18n();
   const pts = progressionFor(bundle.races, key, (r) => bundle.meets[r.meetId]?.date ?? '');
   if (pts.length < 2) {
-    return <p className="chart-empty">기록이 2개 이상 쌓이면 진척 그래프가 보여요.</p>;
+    return <p className="chart-empty">{t('pf.noChart')}</p>;
   }
 
   const W = 320;
@@ -32,7 +34,7 @@ export function ProgressionChart({ bundle, eventKey: key }: { bundle: PortfolioB
       <div className="prog-head">
         <strong>{key.replace(/-/g, ' ')}</strong>
         <span className={totalImpr > 0 ? 'delta up' : 'delta'}>
-          {totalImpr > 0 ? '▼' : '▲'} {Math.abs(totalImpr).toFixed(1)}% {totalImpr > 0 ? '향상' : ''}
+          {totalImpr > 0 ? '▼' : '▲'} {Math.abs(totalImpr).toFixed(1)}% {totalImpr > 0 ? t('pf.improved') : ''}
         </span>
       </div>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="진척 그래프">

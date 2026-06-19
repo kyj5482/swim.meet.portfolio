@@ -1,4 +1,5 @@
 import { levelProgress } from '../lib/level';
+import { useI18n } from '../i18n';
 import type { GamificationProfile } from '../types';
 
 /**
@@ -6,6 +7,7 @@ import type { GamificationProfile } from '../types';
  * SVG 원형 진행바로 현재 레벨·다음 레벨까지 진행도·스트릭을 표시.
  */
 export function LevelRing({ profile }: { profile: GamificationProfile }) {
+  const { t } = useI18n();
   const progress = levelProgress(profile.xp);
   const radius = 46;
   const c = 2 * Math.PI * radius;
@@ -31,9 +33,9 @@ export function LevelRing({ profile }: { profile: GamificationProfile }) {
           {profile.xpIntoLevel}/{profile.xpForNextLevel} XP
         </text>
       </svg>
-      <div className="streak" title="연속 활동일">
-        🔥 {profile.currentStreakDays}일 연속
-        <span className="streak-best"> (최장 {profile.longestStreakDays})</span>
+      <div className="streak" title="streak">
+        🔥 {t('pf.streak', { n: profile.currentStreakDays })}
+        <span className="streak-best"> {t('pf.streakBest', { n: profile.longestStreakDays })}</span>
       </div>
     </div>
   );

@@ -80,3 +80,24 @@ export interface PortfolioBundle {
 export function eventKey(r: Pick<RaceResult, 'stroke' | 'distance' | 'course'>): string {
   return `${r.stroke}-${r.distance}-${r.course}`;
 }
+
+/** 가족에 등록된 선수(매칭 대상). */
+export interface RosterAthlete {
+  id: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  gender: Gender;
+}
+
+/** 결과지(사진/이메일)에서 추출된 한 줄 — 검증 전. */
+export interface ExtractedRow {
+  swimmerName: string; // 결과지에 적힌 이름(원문)
+  ageGroup?: string; // 결과지에 표기된 나이대(있으면)
+  stroke: Stroke;
+  distance: number;
+  course: Course;
+  timeMs: number;
+  place?: number;
+  fieldConfidence: Record<string, number>;
+}

@@ -1,59 +1,56 @@
 import { useState } from 'react';
+import { useI18n, type TranslationKey } from './i18n';
+import { useAuth } from './auth/AuthContext';
+import { AuthScreen } from './screens/AuthScreen';
 import { Portfolio } from './components/Portfolio';
-import { ReviewRace, type ExtractedRace } from './components/ReviewRace';
+import { IntakeScreen } from './screens/IntakeScreen';
+import { FamilyScreen } from './screens/FamilyScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 
-/** 데모용 추출 결과 — 실제로는 extraction-service 응답으로 채워진다. */
-const DEMO_RACE: ExtractedRace = {
-  stroke: 'FR',
-  distance: 50,
-  course: 'SCY',
-  timeMs: 28910,
-  place: 3,
-  fieldConfidence: { stroke: 0.99, distance: 0.98, course: 0.97, timeMs: 0.72, place: 0.95 },
-};
+type Tab = 'portfolio' | 'intake' | 'family' | 'settings';
 
-type Tab = 'portfolio' | 'upload';
+const NAV: { tab: Tab; key: TranslationKey; icon: string }[] = [
+  { tab: 'portfolio', key: 'nav.portfolio', icon: '🏅' },
+  { tab: 'intake', key: 'nav.intake', icon: '📷' },
+  { tab: 'family', key: 'nav.family', icon: '👨‍👩‍👧' },
+  { tab: 'settings', key: 'nav.settings', icon: '⚙️' },
+];
 
 export function App() {
+  const { t } = useI18n();
+  const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('portfolio');
-  const [race, setRace] = useState<ExtractedRace>(DEMO_RACE);
-  const [confirmed, setConfirmed] = useState(false);
+
+  // 미인증 → 로그인/회원가입 게이트
+  if (!user) return <AuthScreen />;
 
   return (
     <div className="app">
       <header className="app-bar">
-        <span className="brand">🏊 SwimVault</span>
-        <nav className="tabs" role="tablist">
-          <button
-            role="tab"
-            aria-selected={tab === 'portfolio'}
-            className={tab === 'portfolio' ? 'tab active' : 'tab'}
-            onClick={() => setTab('portfolio')}
-          >
-            포트폴리오
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'upload'}
-            className={tab === 'upload' ? 'tab active' : 'tab'}
-            onClick={() => setTab('upload')}
-          >
-            기록 추가
-          </button>
-        </nav>
+        <span className="brand">🏊 {t('app.brand')}</span>
       </header>
 
       <main className="app-main">
         {tab === 'portfolio' && <Portfolio />}
-        {tab === 'upload' && (
-          <section className="upload">
-            <h1>추출 결과 확인·수정</h1>
-            <p>낮은 신뢰도(&lt;0.8) 필드는 강조됩니다. 수정 후 확정하세요. (P2)</p>
-            <ReviewRace race={race} onChange={setRace} onConfirm={() => setConfirmed(true)} />
-            {confirmed && <p role="status">확정되었습니다. 포트폴리오에 반영됩니다.</p>}
-          </section>
-        )}
+        {tab === 'intake' && <IntakeScreen />}
+        {tab === 'family' && <FamilyScreen />}
+        {tab === 'settings' && <SettingsScreen />}
       </main>
+
+      <nav className="bottom-nav" role="tablist">
+        {NAV.map(({ tab: tb, key, icon }) => (
+          <button
+            key={tb}
+            role="tab"
+            aria-selected={tab === tb}
+            className={tab === tb ? 'nav-item active' : 'nav-item'}
+            onClick={() => setTab(tb)}
+          >
+            <span className="nav-icon" aria-hidden>{icon}</span>
+            <span className="nav-label">{t(key)}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

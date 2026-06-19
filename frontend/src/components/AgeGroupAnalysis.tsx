@@ -1,7 +1,8 @@
 import { formatMsToTime } from '../lib/time';
 import { tierForTime, type StandardLine } from '../lib/standards';
-import { ageGroupBreakdown, improvementRate, rateLabel } from '../lib/ageAnalysis';
+import { ageGroupBreakdown, improvementRate, rateCategory } from '../lib/ageAnalysis';
 import { progressionFor } from '../lib/portfolio';
+import { useI18n } from '../i18n';
 import type { PortfolioBundle } from '../types';
 
 /**
@@ -10,6 +11,7 @@ import type { PortfolioBundle } from '../types';
  * 나이 그룹마다 최고기록·등급을 보존하고, 기록이 얼마나 빨리 좋아지는지(월 향상%)를 보여준다.
  */
 export function AgeGroupAnalysis({ bundle, eventKey: key }: { bundle: PortfolioBundle; eventKey: string }) {
+  const { t } = useI18n();
   const meetDate = (id: string) => bundle.meets[id]?.date ?? '';
   const groups = ageGroupBreakdown(bundle.races, key, bundle.athlete.birthDate, (r) => meetDate(r.meetId));
   if (groups.length === 0) return null;
@@ -22,23 +24,26 @@ export function AgeGroupAnalysis({ bundle, eventKey: key }: { bundle: PortfolioB
     <div className="age-analysis">
       <div className="rate-card">
         <div className="rate-main">
-          <span className="rate-label">향상 속도</span>
-          <strong className="rate-value">{rateLabel(rate.pctPerMonth)}</strong>
+          <span className="rate-label">{t('pf.rate.title')}</span>
+          <strong className="rate-value">{t(`pf.rate.${rateCategory(rate.pctPerMonth)}`)}</strong>
         </div>
         <div className="rate-detail">
-          {rate.months >= 1 ? `${Math.round(rate.months)}개월간 ` : ''}
-          총 {rate.totalPct.toFixed(1)}% 향상 · 월 평균 {rate.pctPerMonth.toFixed(2)}%
+          {t('pf.rate.detail', {
+            months: Math.round(rate.months),
+            total: rate.totalPct.toFixed(1),
+            perMonth: rate.pctPerMonth.toFixed(2),
+          })}
         </div>
       </div>
 
-      <table className="age-table" aria-label="나이 그룹별 기록">
+      <table className="age-table" aria-label="age group records">
         <thead>
           <tr>
-            <th>나이 그룹</th>
-            <th>최고기록</th>
-            <th>그룹 등급</th>
-            <th>그룹 내 향상</th>
-            <th>횟수</th>
+            <th>{t('pf.col.ageGroup')}</th>
+            <th>{t('pf.col.best')}</th>
+            <th>{t('pf.col.groupTier')}</th>
+            <th>{t('pf.col.groupImprove')}</th>
+            <th>{t('pf.col.count')}</th>
           </tr>
         </thead>
         <tbody>
@@ -54,7 +59,7 @@ export function AgeGroupAnalysis({ bundle, eventKey: key }: { bundle: PortfolioB
                   {tier.achieved ? (
                     <span className={`tier tier-${tier.achieved}`}>{tier.achieved}</span>
                   ) : lines.length ? (
-                    <span className="tier tier-none">미달</span>
+                    <span className="tier tier-none">-</span>
                   ) : (
                     <span className="tier tier-na">—</span>
                   )}
@@ -68,10 +73,7 @@ export function AgeGroupAnalysis({ bundle, eventKey: key }: { bundle: PortfolioB
           })}
         </tbody>
       </table>
-      <p className="age-note">
-        대회는 나이대로 나뉩니다. 각 나이 그룹에서의 기록·등급을 잃지 않고 보존해
-        성장 궤적을 한눈에 볼 수 있어요.
-      </p>
+      <p className="age-note">{t('pf.ageNote')}</p>
     </div>
   );
 }

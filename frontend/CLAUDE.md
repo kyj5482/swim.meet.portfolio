@@ -4,58 +4,67 @@
 
 ## 책임
 
-부모·수영 학생용 클라이언트. 두 축:
+부모(보호자)·수영 학생용 모바일 앱(웹/PWA, iOS는 Capacitor 래핑 예정). 인증 게이트 +
+하단 4탭 셸: **포트폴리오 / 기록 추가 / 가족 / 설정**.
+
 1. **포트폴리오(핵심)** — 선수가 평생 쌓는 기록부를 한 화면에. 경쟁 앱(Swimmetry) 벤치마킹 +
-   레벨/뱃지/스트릭(게임화)·한·미 통합 타임라인·가족 리더보드로 차별화.
-2. **기록 추가** — 결과지 업로드 → ★ 추출 결과 검증·수정(Review & Confirm, 설계 P2).
+   레벨/뱃지/스트릭(게임화)·나이 그룹별 분석·가족 리더보드로 차별화.
+2. **기록 추가(가장 중요)** — 결과지를 ① 사진 ② 이메일로 입력 → 추출 → **등록된 아이만 매칭** →
+   ★ 검증·수정(P2) → 확정. 등록 외 선수 기록은 저장하지 않음(P6).
+3. **가족** — 구성원/선수 목록, 아이 추가, 가족 초대 코드.
+4. **설정** — 언어(한/영) 전환, 계정/로그아웃.
 
 서비스 직접 호출 없이 `api-gateway`(REST)만 통한다. API 계약은 `docs/03-api-contracts.md`.
-데이터는 `src/api/client.ts`만 의존 — 기본은 시드(mock), `VITE_USE_MOCK=false`면 실서버 조립.
+모든 데이터는 `src/api/*`만 의존 — 기본은 mock(자립), `VITE_USE_MOCK=false`면 실서버.
 
 ## 스택
 
-- React 18 + Vite + TypeScript (모바일 PWA 지향)
-- 테스트: Vitest + @testing-library/react (jsdom)
-- 독립 패키지로 빌드된다 → 공유 타입/유틸은 `@swimvault/contracts`를 **로컬 미러링**한다.
+- React 18 + Vite + TypeScript (모바일 PWA, iOS Capacitor 지향)
+- 다국어: `src/i18n` (ko/en, localStorage 영속, navigator 자동감지)
+- 인증: `src/auth/AuthContext` (token/user localStorage, mock/실서버)
+- 테스트: Vitest + @testing-library/react (jsdom). `setupTests.ts`가 afterEach cleanup.
+- 독립 패키지로 빌드 → 공유 타입/유틸은 `@swimvault/contracts`를 **로컬 미러링**.
 
 ## 구조
 
 ```
 src/
-  main.tsx                  앱 엔트리
-  App.tsx                   탭 셸: 포트폴리오 / 기록 추가
-  types.ts                  도메인 타입 (contracts 미러)
+  main.tsx                  엔트리: I18nProvider → AuthProvider → App
+  App.tsx                   인증 게이트 + 하단 4탭 셸
+  types.ts                  도메인 타입 + RosterAthlete/ExtractedRow (contracts 미러)
+  i18n/                     index.tsx(Provider/useI18n/t) + ko.ts + en.ts
+  auth/AuthContext.tsx      user/token 상태, login/register/logout
   api/
-    client.ts               getPortfolio() — mock(시드)/실서버 전환, x-request-id 부여
-  data/seed.ts              한·미 양국 시드 포트폴리오(자립 렌더용)
+    config.ts               API_BASE / USE_MOCK / apiFetch(x-request-id·Bearer)
+    client.ts               getPortfolio() — mock(시드)/실서버
+    auth.ts                 login/register (auth-service)
+    family.ts               getRoster/addAthlete/멤버/초대 (athlete·family-service)
+    intake.ts               extractFromPhoto/Email (ingestion·extraction, mock 샘플)
+  data/seed.ts              시드 포트폴리오(자립 렌더용)
   lib/
-    time.ts                 parseTimeToMs / formatMsToTime (contracts 미러)
-    level.ts                레벨 곡선 (contracts gamification 미러) + 테스트
-    standards.ts            기준 대비 등급(B~AAAA) 계산 + 테스트
-    portfolio.ts            베스트타임/향상%/진척/나이 집계 + 테스트
-    ageGroup.ts             나이 그룹(10&U~19+) 계산 + 테스트
-    ageAnalysis.ts          나이 그룹별 기록·향상 속도(월%) 분석 + 테스트
-  components/
-    Portfolio.tsx           ★ 포트폴리오 화면(조합)
-    LevelRing.tsx           스킬 레벨 SVG 링(게임화 차별)
-    BadgeShelf.tsx          획득 뱃지
-    BestTimesBoard.tsx      종목별 최고기록 + 등급 히트맵 + 향상%
-    ProgressionChart.tsx    선택 종목 진척 SVG 그래프(무외부의존)
-    AgeGroupAnalysis.tsx    나이 그룹별 기록 수준 + 향상 속도(차별)
-    RaceTimeline.tsx        한·미 통합 타임라인(국기)
-    FamilyPanel.tsx         가족 리더보드
-    ReviewRace.tsx          ★ 추출 결과 확인·수정 화면(P2)
-    *.test.tsx              컴포넌트 테스트
-  setupTests.ts             jest-dom 매처
-  styles.css                포트폴리오 + .low-confidence 강조 스타일
+    time, level, standards, portfolio, ageGroup, ageAnalysis  순수 로직(+테스트)
+    match.ts                결과지 추출 → 등록 아이만 매칭 (P6, +테스트)
+  components/               Portfolio, LevelRing, BadgeShelf, BestTimesBoard,
+                            ProgressionChart, AgeGroupAnalysis, RaceTimeline,
+                            FamilyPanel, ReviewRace  (+테스트)
+  screens/                  AuthScreen, IntakeScreen, FamilyScreen, SettingsScreen (+테스트)
+  styles.css                전체 스타일(앱셸·인증·결과지입력·포트폴리오)
 ```
 
 ## 포트폴리오 설계 (경쟁 벤치마킹 + 차별화)
 - **벤치마킹:** 종목별 최고기록 보드, 기준 대비 등급 컬러(히트맵), 향상%, 진척 그래프.
-- **차별화:** 레벨 링/뱃지/스트릭(게임화), 한·미 통합 타임라인, 가족 리더보드,
+- **차별화:** 레벨 링/뱃지/스트릭(게임화), 가족 리더보드,
   **나이 그룹별 기록 수준 + 향상 속도**(대회는 나이대로 나뉘는데 그 수준이 종단으로
   안 남는 문제를 보완 — 그룹별 최고기록·등급 보존 + 월 향상% 분석).
 - 순수 집계는 `lib/`에 분리해 테스트로 고정. 차트는 외부 라이브러리 없이 SVG(번들 경량).
+
+## ★ 결과지 입력 (가장 중요) — 나이대별 쉬운 입력
+- **사진**(`IntakeScreen` photo): 마스터즈·커뮤니티 대회 결과지 사진 → `extractFromPhoto` →
+  `matchExtractedToAthletes`로 **등록된 아이만** 골라 ReviewRace로 검증 → 확정.
+- **이메일**(email): 공식 이메일 본문 + 첨부 → `extractFromEmail` → 동일 매칭/검증.
+- 매칭은 형제가 성을 공유하므로 **풀네임 조합/이름(given)** 기준(`lib/match.ts`).
+  등록 외 선수는 별도 표시 + **저장 안 함**(P6 프라이버시).
+- 각 매칭 기록에 **추정 나이대** 칩 표시(결과지 표기 우선, 없으면 생년월일로 계산).
 
 ## ★ 핵심 화면 — 추출 결과 확인·수정 (설계 P2)
 

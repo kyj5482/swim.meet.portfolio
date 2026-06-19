@@ -9,7 +9,7 @@ describe('Portfolio', () => {
     expect(screen.getByText(/불러오는 중/)).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /지우 Kim/ })).toBeInTheDocument();
     expect(await screen.findByText('종목별 최고기록 & 등급')).toBeInTheDocument();
-    expect(await screen.findByText('한·미 통합 타임라인')).toBeInTheDocument();
+    expect(await screen.findByText('기록 타임라인')).toBeInTheDocument();
     expect(await screen.findByText('우리 가족 리더보드')).toBeInTheDocument();
   });
 });

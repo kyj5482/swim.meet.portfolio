@@ -1,15 +1,8 @@
 import { formatMsToTime } from '../lib/time';
 import { tierForTime, type StandardLine } from '../lib/standards';
 import { bestTimesByEvent } from '../lib/portfolio';
-import type { PortfolioBundle, Stroke } from '../types';
-
-const STROKE_KO: Record<Stroke, string> = {
-  FR: '자유형',
-  BK: '배영',
-  BR: '평영',
-  FL: '접영',
-  IM: '개인혼영',
-};
+import { useI18n } from '../i18n';
+import type { PortfolioBundle } from '../types';
 
 export interface BestTimesBoardProps {
   bundle: PortfolioBundle;
@@ -22,18 +15,19 @@ export interface BestTimesBoardProps {
  * 기준 대비 등급(B~AAAA)을 컬러 칩으로(히트맵), 최초 대비 향상%를 함께 보여준다.
  */
 export function BestTimesBoard({ bundle, selectedKey, onSelect }: BestTimesBoardProps) {
+  const { t } = useI18n();
   const meetDate = (id: string) => bundle.meets[id]?.date ?? '';
   const rows = bestTimesByEvent(bundle.races, (r) => meetDate(r.meetId));
 
   return (
-    <table className="best-times" aria-label="종목별 최고기록">
+    <table className="best-times" aria-label="best times">
       <thead>
         <tr>
-          <th>종목</th>
-          <th>최고기록</th>
-          <th>등급</th>
-          <th>향상</th>
-          <th>횟수</th>
+          <th>{t('pf.col.event')}</th>
+          <th>{t('pf.col.best')}</th>
+          <th>{t('pf.col.tier')}</th>
+          <th>{t('pf.col.improve')}</th>
+          <th>{t('pf.col.count')}</th>
         </tr>
       </thead>
       <tbody>
@@ -55,7 +49,7 @@ export function BestTimesBoard({ bundle, selectedKey, onSelect }: BestTimesBoard
               }}
             >
               <td>
-                {e.distance} {STROKE_KO[e.stroke]} <span className="course">{e.course}</span>
+                {e.distance} {t(`stroke.${e.stroke}`)} <span className="course">{e.course}</span>
                 {e.best.isPB && <span className="pb-tag">PB</span>}
               </td>
               <td className="time">{formatMsToTime(e.best.timeMs)}</td>

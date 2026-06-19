@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n';
 import type { FamilyMemberView } from '../types';
 
 const MEDAL = ['🥇', '🥈', '🥉'];
@@ -7,9 +8,10 @@ const MEDAL = ['🥇', '🥈', '🥉'];
  * + 선의의 경쟁 = 리텐션. 순위는 gamification-service `/leaderboard` 결과.
  */
 export function FamilyPanel({ family }: { family: FamilyMemberView[] }) {
+  const { t } = useI18n();
   return (
     <div className="family-panel">
-      <h3>우리 가족 리더보드</h3>
+      <h3>{t('pf.family')}</h3>
       <ol className="family-board" aria-label="가족 리더보드">
         {family.map((m) => (
           <li key={m.athleteId} className="fam-row">
@@ -20,7 +22,7 @@ export function FamilyPanel({ family }: { family: FamilyMemberView[] }) {
           </li>
         ))}
       </ol>
-      <p className="family-hint">가족을 초대하면 함께 기록을 쌓고 순위를 겨뤄요.</p>
+      <p className="family-hint">{t('pf.familyHint')}</p>
     </div>
   );
 }

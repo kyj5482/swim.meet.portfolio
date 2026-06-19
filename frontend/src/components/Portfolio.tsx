@@ -6,6 +6,7 @@ import { LevelRing } from './LevelRing';
 import { BadgeShelf } from './BadgeShelf';
 import { BestTimesBoard } from './BestTimesBoard';
 import { ProgressionChart } from './ProgressionChart';
+import { AgeGroupAnalysis } from './AgeGroupAnalysis';
 import { RaceTimeline } from './RaceTimeline';
 import { FamilyPanel } from './FamilyPanel';
 
@@ -71,6 +72,13 @@ export function Portfolio({ athleteId = 'ath-jiwoo' }: { athleteId?: string }) {
           {selectedKey && <ProgressionChart bundle={bundle} eventKey={selectedKey} />}
         </div>
       </section>
+
+      {selectedKey && (
+        <section className="pf-section">
+          <h3>나이 그룹별 기록 수준 & 향상 속도</h3>
+          <AgeGroupAnalysis bundle={bundle} eventKey={selectedKey} />
+        </section>
+      )}
 
       <section className="pf-section">
         <h3>한·미 통합 타임라인</h3>

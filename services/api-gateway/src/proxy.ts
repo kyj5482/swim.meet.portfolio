@@ -1,7 +1,8 @@
 /**
- * 경로 프리픽스 → 업스트림 서비스 매핑 (순수 로직, 테스트 핵심).
- * 실제 프록시 전달은 골격에 포함하지 않는다(스텁).
+ * 경로 프리픽스 → 업스트림 서비스 매핑(순수) + 실제 프록시 전달.
+ * 게이트웨이는 단일 진입점이므로 x-request-id를 다운스트림으로 전파해 추적을 잇는다.
  */
+import type { Request, Response } from 'express';
 
 export interface ResolvedTarget {
   service: string;
@@ -78,4 +79,61 @@ export function verifyBearer(header?: string): { ok: boolean } {
   if (!trimmed.toLowerCase().startsWith('bearer ')) return { ok: false };
   const token = trimmed.slice(7).trim();
   return { ok: token.length > 0 };
+}
+
+/** baseUrl + 원본 경로(쿼리 포함)로 업스트림 URL 조립. */
+export function buildTargetUrl(baseUrl: string, originalUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}${originalUrl}`;
+}
+
+/** 프록시 시 제거할 hop-by-hop 헤더(RFC 7230). content-length는 fetch가 재계산. */
+const HOP_BY_HOP = new Set([
+  'host', 'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
+  'te', 'trailer', 'transfer-encoding', 'upgrade', 'content-length',
+]);
+
+/** 다운스트림으로 전달할 헤더 — hop-by-hop 제거 + x-request-id 강제 주입(추적 전파). */
+export function forwardHeaders(
+  raw: Record<string, string | string[] | undefined>,
+  requestId: string,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (v === undefined || HOP_BY_HOP.has(k.toLowerCase())) continue;
+    out[k] = Array.isArray(v) ? v.join(', ') : v;
+  }
+  out['x-request-id'] = requestId;
+  return out;
+}
+
+/**
+ * 요청을 업스트림으로 전달하고 응답을 그대로 반환.
+ * JSON 본문만 재직렬화(우리 API는 JSON). 멀티파트 업로드 프록시는 후속 과제.
+ * 업스트림 도달 실패 시 502.
+ */
+export async function forward(
+  target: ResolvedTarget,
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const url = buildTargetUrl(target.url, req.originalUrl);
+  const requestId = (req as Request & { requestId?: string }).requestId ?? '';
+  const hasBody = req.method !== 'GET' && req.method !== 'HEAD';
+  const isJson = (req.headers['content-type'] ?? '').includes('application/json');
+  try {
+    const upstream = await fetch(url, {
+      method: req.method,
+      headers: forwardHeaders(req.headers, requestId),
+      body: hasBody && isJson ? JSON.stringify(req.body ?? {}) : undefined,
+    });
+    const text = await upstream.text();
+    res.status(upstream.status);
+    const ct = upstream.headers.get('content-type');
+    if (ct) res.set('content-type', ct);
+    res.send(text);
+  } catch {
+    res
+      .status(502)
+      .json({ error: { code: 'BAD_GATEWAY', message: `upstream ${target.service} unreachable` } });
+  }
 }

@@ -1,4 +1,4 @@
-import { resolveTarget, verifyBearer } from './proxy.js';
+import { resolveTarget, verifyBearer, buildTargetUrl, forwardHeaders } from './proxy.js';
 
 describe('resolveTarget', () => {
   const cases: Array<[string, string]> = [
@@ -49,5 +49,32 @@ describe('verifyBearer', () => {
   it('not ok when malformed', () => {
     expect(verifyBearer('Basic abc').ok).toBe(false);
     expect(verifyBearer('Bearer ').ok).toBe(false);
+  });
+});
+
+describe('buildTargetUrl', () => {
+  it('베이스 + 원본 경로(쿼리 포함) 조립', () => {
+    expect(buildTargetUrl('http://family-service:8089', '/api/families/1?x=2')).toBe(
+      'http://family-service:8089/api/families/1?x=2',
+    );
+  });
+  it('베이스 끝 슬래시 중복 제거', () => {
+    expect(buildTargetUrl('http://svc:80/', '/api/x')).toBe('http://svc:80/api/x');
+  });
+});
+
+describe('forwardHeaders', () => {
+  it('hop-by-hop 제거 + x-request-id 주입', () => {
+    const out = forwardHeaders(
+      { host: 'gw', 'content-length': '10', authorization: 'Bearer t', 'content-type': 'application/json' },
+      'req-123',
+    );
+    expect(out.host).toBeUndefined();
+    expect(out['content-length']).toBeUndefined();
+    expect(out.authorization).toBe('Bearer t');
+    expect(out['x-request-id']).toBe('req-123');
+  });
+  it('배열 헤더는 콤마 결합', () => {
+    expect(forwardHeaders({ accept: ['a', 'b'] }, 'r')['accept']).toBe('a, b');
   });
 });

@@ -70,8 +70,10 @@ export interface PortfolioBundle {
   races: RaceResult[];
   gamification: GamificationProfile;
   family: FamilyMemberView[];
-  /** 이벤트 키(`${stroke}-${distance}-${course}`) → 기준 라인들 */
+  /** 이벤트 키(`${stroke}-${distance}-${course}`) → 기준 라인들(현재 나이 그룹) */
   standards: Record<string, { label: string; timeMs: number }[]>;
+  /** 이벤트 키 → 나이 그룹 → 기준 라인들 (나이 그룹별 등급 판정) */
+  ageStandards?: Record<string, Record<string, { label: string; timeMs: number }[]>>;
 }
 
 /** 이벤트 식별 키. */

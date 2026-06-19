@@ -33,12 +33,15 @@ src/
     level.ts                레벨 곡선 (contracts gamification 미러) + 테스트
     standards.ts            기준 대비 등급(B~AAAA) 계산 + 테스트
     portfolio.ts            베스트타임/향상%/진척/나이 집계 + 테스트
+    ageGroup.ts             나이 그룹(10&U~19+) 계산 + 테스트
+    ageAnalysis.ts          나이 그룹별 기록·향상 속도(월%) 분석 + 테스트
   components/
     Portfolio.tsx           ★ 포트폴리오 화면(조합)
     LevelRing.tsx           스킬 레벨 SVG 링(게임화 차별)
     BadgeShelf.tsx          획득 뱃지
     BestTimesBoard.tsx      종목별 최고기록 + 등급 히트맵 + 향상%
     ProgressionChart.tsx    선택 종목 진척 SVG 그래프(무외부의존)
+    AgeGroupAnalysis.tsx    나이 그룹별 기록 수준 + 향상 속도(차별)
     RaceTimeline.tsx        한·미 통합 타임라인(국기)
     FamilyPanel.tsx         가족 리더보드
     ReviewRace.tsx          ★ 추출 결과 확인·수정 화면(P2)
@@ -49,7 +52,9 @@ src/
 
 ## 포트폴리오 설계 (경쟁 벤치마킹 + 차별화)
 - **벤치마킹:** 종목별 최고기록 보드, 기준 대비 등급 컬러(히트맵), 향상%, 진척 그래프.
-- **차별화:** 레벨 링/뱃지/스트릭(게임화), 한·미 통합 타임라인, 가족 리더보드.
+- **차별화:** 레벨 링/뱃지/스트릭(게임화), 한·미 통합 타임라인, 가족 리더보드,
+  **나이 그룹별 기록 수준 + 향상 속도**(대회는 나이대로 나뉘는데 그 수준이 종단으로
+  안 남는 문제를 보완 — 그룹별 최고기록·등급 보존 + 월 향상% 분석).
 - 순수 집계는 `lib/`에 분리해 테스트로 고정. 차트는 외부 라이브러리 없이 SVG(번들 경량).
 
 ## ★ 핵심 화면 — 추출 결과 확인·수정 (설계 P2)

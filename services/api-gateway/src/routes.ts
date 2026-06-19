@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { resolveTarget, verifyBearer } from './proxy.js';
+import { resolveTarget, verifyBearer, forward } from './proxy.js';
 
 /** 인증이 필요 없는 공개 프리픽스. */
 const PUBLIC_PREFIXES = ['/api/auth'];
@@ -13,8 +13,8 @@ function isPublic(path: string): boolean {
 export function buildRouter(): Router {
   const router = Router();
 
-  // 캐치올: 해석된 대상을 JSON으로 반환(스텁, 실제 프록시 없음).
-  router.all('*', (req, res) => {
+  // 캐치올: 해석된 업스트림으로 실제 프록시 전달.
+  router.all('*', async (req, res) => {
     const target = resolveTarget(req.path);
     if (!target) {
       return res
@@ -28,7 +28,7 @@ export function buildRouter(): Router {
         .json({ error: { code: 'UNAUTHORIZED', message: 'bearer token required' } });
     }
 
-    res.json({ target });
+    await forward(target, req, res);
   });
 
   return router;

@@ -9,6 +9,8 @@ describe('resolveTarget', () => {
     ['/api/records', 'records-service'],
     ['/api/standards', 'standards-service'],
     ['/api/analytics', 'analytics-service'],
+    ['/api/gamification', 'gamification-service'],
+    ['/api/families', 'family-service'],
   ];
 
   it.each(cases)('maps %s → %s', (path, service) => {

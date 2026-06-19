@@ -15,8 +15,10 @@ services:
       RECORDS_SERVICE_URL: http://records-service:8085
       STANDARDS_SERVICE_URL: http://standards-service:8086
       ANALYTICS_SERVICE_URL: http://analytics-service:8087
+      GAMIFICATION_SERVICE_URL: http://gamification-service:8088
+      FAMILY_SERVICE_URL: http://family-service:8089
     ports: ["8080:8080"]
-    depends_on: [auth-service, athlete-service, ingestion-service, extraction-service, records-service, standards-service, analytics-service]
+    depends_on: [auth-service, athlete-service, ingestion-service, extraction-service, records-service, standards-service, analytics-service, gamification-service, family-service]
 
   auth-service:
     build: { context: ., dockerfile: docker/node-service.Dockerfile, args: { SERVICE: auth-service } }
@@ -55,6 +57,16 @@ services:
     build: { context: ., dockerfile: docker/node-service.Dockerfile, args: { SERVICE: analytics-service } }
     environment: { PORT: 8087 }
     ports: ["8087:8087"]
+
+  gamification-service:
+    build: { context: ., dockerfile: docker/node-service.Dockerfile, args: { SERVICE: gamification-service } }
+    environment: { PORT: 8088 }
+    ports: ["8088:8088"]
+
+  family-service:
+    build: { context: ., dockerfile: docker/node-service.Dockerfile, args: { SERVICE: family-service } }
+    environment: { PORT: 8089 }
+    ports: ["8089:8089"]
 
   frontend:
     build: { context: ./frontend }

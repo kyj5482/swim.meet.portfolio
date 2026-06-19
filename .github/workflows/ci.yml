@@ -29,10 +29,15 @@ jobs:
           - records-service
           - standards-service
           - analytics-service
+          - gamification-service
+          - family-service
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
+      # 공유 계약을 먼저 빌드해야 서비스의 typecheck/build가 dist 타입을 찾는다.
+      - run: npm install && npm run build
+        working-directory: libs/contracts
       - run: npm install && npm run build --if-present && npm run typecheck && npm test
         working-directory: services/${{ matrix.service }}
 

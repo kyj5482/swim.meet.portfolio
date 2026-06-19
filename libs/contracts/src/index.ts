@@ -1,6 +1,8 @@
 /** @swimvault/contracts — 서비스 간 공유 진입점 */
 export * from './domain.js';
 export * from './time.js';
+export * from './gamification.js';
+export * from './family.js';
 
 /** 표준 에러 형태 (docs/03-api-contracts.md) */
 export interface ApiError {

@@ -50,6 +50,16 @@ const ROUTES: Route[] = [
     service: 'analytics-service',
     url: () => process.env.ANALYTICS_SERVICE_URL ?? 'http://analytics-service:8087',
   },
+  {
+    prefix: '/api/gamification',
+    service: 'gamification-service',
+    url: () => process.env.GAMIFICATION_SERVICE_URL ?? 'http://gamification-service:8088',
+  },
+  {
+    prefix: '/api/families',
+    service: 'family-service',
+    url: () => process.env.FAMILY_SERVICE_URL ?? 'http://family-service:8089',
+  },
 ];
 
 /** 경로 프리픽스를 업스트림 대상으로 해석. 매칭 없으면 null. */

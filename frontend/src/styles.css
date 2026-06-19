@@ -65,3 +65,110 @@ button {
   color: #fff;
   cursor: pointer;
 }
+
+/* ============================================================
+   포트폴리오 UI — 모바일 우선, iOS 앱 래핑 고려(터치 타깃 ≥ 40px)
+   ============================================================ */
+
+.app { max-width: 32rem; margin: 0 auto; }
+
+.app-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.5rem 0.25rem 0.75rem;
+}
+.brand { font-size: 1.15rem; font-weight: 800; }
+.tabs { display: flex; gap: 0.25rem; }
+.tab {
+  background: transparent; color: inherit; border: 1px solid transparent;
+  padding: 0.45rem 0.7rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem;
+}
+.tab.active { background: #1e6feb; color: #fff; }
+
+.loading, .chart-empty, .badge-empty { color: #888; font-size: 0.9rem; }
+
+/* 헤더 */
+.pf-header { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+.pf-id h2 { margin: 0 0 0.15rem; font-size: 1.2rem; }
+.pf-sub { margin: 0 0 0.5rem; color: #777; font-size: 0.85rem; }
+.flag { margin-left: 0.15rem; }
+
+/* 레벨 링 */
+.level-ring { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; }
+.ring-track { fill: none; stroke: #e6e8eb; stroke-width: 10; }
+.ring-progress { fill: none; stroke: #1e6feb; stroke-width: 10; stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease; }
+.ring-level { font-size: 20px; font-weight: 800; fill: #1e6feb; }
+.ring-xp { font-size: 10px; fill: #888; }
+.streak { font-size: 0.8rem; margin-top: 0.25rem; }
+.streak-best { color: #999; }
+
+/* 뱃지 */
+.badge-shelf { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0; }
+.badge { display: inline-flex; align-items: center; gap: 0.25rem;
+  background: #f1f4f9; border-radius: 999px; padding: 0.2rem 0.55rem; font-size: 0.78rem; }
+.badge-icon { font-size: 0.95rem; }
+
+/* 섹션 */
+.pf-section { margin: 1.25rem 0; }
+.pf-section h3 { font-size: 1rem; margin: 0 0 0.5rem; }
+.pf-grid { display: grid; gap: 0.75rem; }
+
+/* 베스트타임 보드 */
+.best-times { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.best-times th { text-align: left; color: #888; font-weight: 600; font-size: 0.75rem;
+  border-bottom: 1px solid #eee; padding: 0.3rem 0.4rem; }
+.best-times td { padding: 0.5rem 0.4rem; border-bottom: 1px solid #f2f2f2; }
+.best-times .row { cursor: pointer; }
+.best-times .row.selected { background: #eef4ff; }
+.best-times .time { font-variant-numeric: tabular-nums; font-weight: 700; }
+.course { color: #aaa; font-size: 0.72rem; font-weight: 600; }
+.pb-tag { background: #ffd54f; color: #5a4500; font-size: 0.62rem; font-weight: 800;
+  border-radius: 4px; padding: 0 0.25rem; margin-left: 0.3rem; vertical-align: middle; }
+.delta { color: #999; font-variant-numeric: tabular-nums; }
+.delta.up { color: #1aa260; font-weight: 700; }
+
+/* 기준 등급 칩(히트맵 — 빠를수록 진함) */
+.tier { font-size: 0.7rem; font-weight: 800; border-radius: 4px; padding: 0.1rem 0.4rem; color: #fff; }
+.tier-B { background: #9fb3c8; }
+.tier-BB { background: #6c8cff; }
+.tier-A { background: #1e6feb; }
+.tier-AA { background: #6a3df0; }
+.tier-AAA { background: #c026d3; }
+.tier-AAAA { background: #e11d48; }
+.tier-none { background: #e6e8eb; color: #888; }
+.tier-na { background: transparent; color: #ccc; }
+
+/* 진척 그래프 */
+.progression { border: 1px solid #eee; border-radius: 8px; padding: 0.6rem; }
+.prog-head { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem; }
+.prog-line { stroke: #1e6feb; stroke-width: 2.5; }
+.prog-dot { fill: #1e6feb; }
+.prog-dot.pb { fill: #ffd54f; stroke: #5a4500; stroke-width: 1.5; }
+.prog-foot { display: flex; justify-content: space-between; color: #999; font-size: 0.72rem; margin-top: 0.2rem; }
+
+/* 타임라인 */
+.timeline { list-style: none; padding: 0; margin: 0; }
+.tl-item { display: flex; gap: 0.6rem; padding: 0.55rem 0; border-bottom: 1px solid #f2f2f2; }
+.tl-flag { font-size: 1.3rem; }
+.tl-body { flex: 1; }
+.tl-top { display: flex; justify-content: space-between; font-weight: 600; }
+.tl-time { font-variant-numeric: tabular-nums; }
+.tl-meta { color: #999; font-size: 0.78rem; margin-top: 0.1rem; }
+
+/* 가족 */
+.family-panel h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.family-board { list-style: none; padding: 0; margin: 0; }
+.fam-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.4rem;
+  border-bottom: 1px solid #f2f2f2; }
+.fam-rank { width: 2rem; text-align: center; font-size: 1.1rem; }
+.fam-name { flex: 1; font-weight: 600; }
+.fam-level { color: #1e6feb; font-weight: 700; }
+.fam-xp { color: #999; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.family-hint { color: #aaa; font-size: 0.78rem; margin: 0.5rem 0 0; }
+
+@media (prefers-color-scheme: dark) {
+  .badge { background: #1d2128; }
+  .best-times .row.selected { background: #14233f; }
+  .tier-none { background: #2a2f37; color: #aaa; }
+  .ring-track { stroke: #2a2f37; }
+}

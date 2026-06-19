@@ -4,13 +4,13 @@
 
 ## 책임
 
-부모용 클라이언트. 핵심 UX 흐름: **업로드 → (추출 결과) 검증·수정 → 기록부**.
-
-- 결과지(사진/PDF/결과파일) 업로드 화면
-- ★ 추출 결과 확인·수정(Review & Confirm) 화면 — 가장 중요
-- 확정된 기록부·진척 뷰 (이후 단계)
+부모·수영 학생용 클라이언트. 두 축:
+1. **포트폴리오(핵심)** — 선수가 평생 쌓는 기록부를 한 화면에. 경쟁 앱(Swimmetry) 벤치마킹 +
+   레벨/뱃지/스트릭(게임화)·한·미 통합 타임라인·가족 리더보드로 차별화.
+2. **기록 추가** — 결과지 업로드 → ★ 추출 결과 검증·수정(Review & Confirm, 설계 P2).
 
 서비스 직접 호출 없이 `api-gateway`(REST)만 통한다. API 계약은 `docs/03-api-contracts.md`.
+데이터는 `src/api/client.ts`만 의존 — 기본은 시드(mock), `VITE_USE_MOCK=false`면 실서버 조립.
 
 ## 스택
 
@@ -23,16 +23,34 @@
 ```
 src/
   main.tsx                  앱 엔트리
-  App.tsx                   데모 셸 (Review 화면 마운트)
+  App.tsx                   탭 셸: 포트폴리오 / 기록 추가
+  types.ts                  도메인 타입 (contracts 미러)
+  api/
+    client.ts               getPortfolio() — mock(시드)/실서버 전환, x-request-id 부여
+  data/seed.ts              한·미 양국 시드 포트폴리오(자립 렌더용)
   lib/
     time.ts                 parseTimeToMs / formatMsToTime (contracts 미러)
-    time.test.ts            시간 유틸 단위 테스트
+    level.ts                레벨 곡선 (contracts gamification 미러) + 테스트
+    standards.ts            기준 대비 등급(B~AAAA) 계산 + 테스트
+    portfolio.ts            베스트타임/향상%/진척/나이 집계 + 테스트
   components/
-    ReviewRace.tsx          ★ 추출 결과 확인·수정 화면
-    ReviewRace.test.tsx     렌더/강조/onChange/onConfirm 테스트
+    Portfolio.tsx           ★ 포트폴리오 화면(조합)
+    LevelRing.tsx           스킬 레벨 SVG 링(게임화 차별)
+    BadgeShelf.tsx          획득 뱃지
+    BestTimesBoard.tsx      종목별 최고기록 + 등급 히트맵 + 향상%
+    ProgressionChart.tsx    선택 종목 진척 SVG 그래프(무외부의존)
+    RaceTimeline.tsx        한·미 통합 타임라인(국기)
+    FamilyPanel.tsx         가족 리더보드
+    ReviewRace.tsx          ★ 추출 결과 확인·수정 화면(P2)
+    *.test.tsx              컴포넌트 테스트
   setupTests.ts             jest-dom 매처
-  styles.css                .low-confidence 강조 스타일 포함
+  styles.css                포트폴리오 + .low-confidence 강조 스타일
 ```
+
+## 포트폴리오 설계 (경쟁 벤치마킹 + 차별화)
+- **벤치마킹:** 종목별 최고기록 보드, 기준 대비 등급 컬러(히트맵), 향상%, 진척 그래프.
+- **차별화:** 레벨 링/뱃지/스트릭(게임화), 한·미 통합 타임라인, 가족 리더보드.
+- 순수 집계는 `lib/`에 분리해 테스트로 고정. 차트는 외부 라이브러리 없이 SVG(번들 경량).
 
 ## ★ 핵심 화면 — 추출 결과 확인·수정 (설계 P2)
 

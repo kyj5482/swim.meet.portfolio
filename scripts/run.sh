@@ -76,7 +76,8 @@ fi
 if [ "$WITH_FRONTEND" = "1" ]; then
   echo "• frontend → :$FRONTEND_PORT (logs/frontend.log)"
   ( cd frontend && [ -d node_modules ] || npm install --silent )
-  ( cd frontend && VITE_API_BASE="$VITE_API_BASE" exec npx vite --port "$FRONTEND_PORT" --host ) \
+  ( cd frontend && VITE_API_BASE="$VITE_API_BASE" VITE_USE_MOCK="${VITE_USE_MOCK:-true}" \
+      exec npx vite --port "$FRONTEND_PORT" --host ) \
     > logs/frontend.log 2>&1 &
   echo $! >> .run/pids
 fi
